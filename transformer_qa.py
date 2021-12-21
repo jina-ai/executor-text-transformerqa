@@ -6,17 +6,19 @@ from transformers import pipeline
 from jina import Document, DocumentArray, Executor, requests
 
 
-def inverse(s):
-    return max((1 - s), 0.001)
-
-
 class Device(IntEnum):
     cpu = -1
     cuda = 0
 
 
 class TransformerQAExecutor(Executor):
-    def __init__(self, device: str = 'cpu', model_name: str = 'bert-large-uncased-whole-word-masking-finetuned-squad', tokenizer_name: Optional[str] = None, **kwargs):
+    def __init__(
+        self,
+        device: str = 'cpu',
+        model_name: str = 'bert-large-uncased-whole-word-masking-finetuned-squad',
+        tokenizer_name: Optional[str] = None,
+        **kwargs
+    ):
         tokenizer_name = tokenizer_name or model_name
         super().__init__(**kwargs)
         self.model = pipeline(
@@ -95,13 +97,7 @@ class TransformerQAExecutor(Executor):
             paragraphs = [m.text for m in ordered_matches]
 
             doc.matches.clear()
-            for (
-                target,
-                confidence_score,
-                uri,
-                tag,
-                paragraph,
-            ) in zip(
+            for (target, confidence_score, uri, tag, paragraph,) in zip(
                 targets,
                 confidence_scores,
                 uris,
