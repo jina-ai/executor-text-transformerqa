@@ -1,5 +1,0 @@
-manifest_version: 1
-name: TransformerQAExecutor
-description: question-answering model from huggingface that extracts answers from questions
-url: https://github.com/jina-ai/executor-text-transformerqa-executor
-keywords: [text, transformer, QA]

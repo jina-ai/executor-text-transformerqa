@@ -1,4 +1,0 @@
-jtype: TransformerQAExecutor
-metas:
-  py_modules:
-    - transformer_qa.py
