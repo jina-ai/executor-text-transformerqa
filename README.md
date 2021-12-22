@@ -22,7 +22,17 @@ doc = Document(
 )
 
 with f:
-    f.search(inputs=doc, on_done=lambda resp: print(resp.docs[0].matches[0].text))
+    doc = f.search(inputs=doc, return_results=True).docs[0]
+```
+
+After search, to get let's say the top 1 answer, paragraph where top 1 answer is extracted from and the confidence score of the top 1 answer:
+
+```python
+# Top 1 match
+match = doc.matches[0]
+answer = match.text
+paragraph = match.tags['paragraph']
+confidence = match.scores['confidence'].value
 ```
 
 
