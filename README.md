@@ -17,7 +17,9 @@ doc = Document(
     content='what is the color of an apple?',
     matches=[
         Document(text='Apple is a tropical fruit that is red in color.'),
-        Document(text='Banana is yellow.'),
+        Document(text='Banana is yellow.')
+    ]
+)
 
 with f:
     f.search(inputs=doc, on_done=lambda resp: print(resp.docs[0].matches[0].text))
