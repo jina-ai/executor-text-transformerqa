@@ -10,7 +10,7 @@ def test_flow():
     doc = Document(
         content='what is the color of an apple?',
         matches=[
-            Document(text='Apple is a tropical fruit that is red in color.'),
+            Document(text='Apple is a pome fruit that is red in color.'),
             Document(text='Banana is yellow.'),
         ],
     )

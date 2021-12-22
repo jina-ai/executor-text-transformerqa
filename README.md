@@ -2,7 +2,7 @@
 
 **TransformerQAExecutor** wraps a question-answering model from huggingface. Given some questions and paragraphs/contexts, it extracts the relevant answers from the given paragraphs/contexts.
 
-**TransformerQAExexecutor** receives [`Documents`](https://docs.jina.ai/fundamentals/document/) where each `Document`'s `text` is the question, and its `matches`'s texts are the contexts/paragraphs where answers will be extracted from.
+**TransformerQAExexecutor** receives [`Document`s](https://docs.jina.ai/fundamentals/document/) where each `Document`'s `text` is the question, and its `matches`'s texts are the contexts/paragraphs where answers will be extracted from.
 
 ## Usage
 
@@ -16,7 +16,7 @@ f = Flow().add(uses='jinahub+docker://TransformerQAExecutor')
 doc = Document(
     content='what is the color of an apple?',
     matches=[
-        Document(text='Apple is a tropical fruit that is red in color.'),
+        Document(text='Apple is a pome fruit that is red in color.'),
         Document(text='Banana is yellow.')
     ]
 )
