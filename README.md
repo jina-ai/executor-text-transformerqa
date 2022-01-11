@@ -1,8 +1,8 @@
 # TransformerQAExecutor
 
-**TransformerQAExecutor** wraps a question-answering model from Hugging Face. Given some questions and paragraphs/contexts, it extracts the relevant answers from the given paragraphs/contexts.
+**TransformerQAExecutor** wraps a question-answering model from Hugging Face. Given a question and paragraph/context, it extracts the relevant answers from the given paragraph/context.
 
-**TransformerQAExexecutor** receives [`Document`s](https://docs.jina.ai/fundamentals/document/) where each `Document`'s `text` is the question, and its `matches`'s texts are the contexts/paragraphs where answers will be extracted from.
+**TransformerQAExexecutor** receives [`Document`s](https://docs.jina.ai/fundamentals/document/) where each `Document`'s `text` is the paragraph, `doc.tags['question']` stores the question.
 
 ## Usage
 
@@ -14,11 +14,8 @@ from jina import Flow, Document
 f = Flow().add(uses='jinahub+docker://TransformerQAExecutor')
 
 doc = Document(
-    content='what is the color of an apple?',
-    matches=[
-        Document(text='Apple is a pome fruit that is red in color.'),
-        Document(text='Banana is yellow.')
-    ]
+    text='Apple is a pome fruit that is red in color. Banana is yellow.',
+    tags={'question': 'what is the color of an apple?'},
 )
 
 with f:
@@ -30,10 +27,9 @@ After searching, we can perform the following to get the top 1 answer.
 # Top 1 match
 match = doc.matches[0]
 answer = match.text
-paragraph = match.tags['paragraph']
 confidence = match.scores['confidence'].value
 ```
-We can also get the corresponding paragraph where the answer comes from and the confidence score of the answer.
+We can also get the confidence score of the answer.
 
 
 ### Use other pre-trained models
