@@ -41,7 +41,7 @@ You can use other models by specifying the `model_name` parameter:
 from jina import Flow, Document
 
 f = Flow().add(
-    uses='jinahub+docker://TransformerTorchEncoder',
+    uses='jinahub+docker://TransformerQAExecutor',
     uses_with={'model_name': 'distilbert-base-cased-distilled-squad'}
 )
 ```
@@ -55,7 +55,7 @@ You may use your own tokenizer by specifying the `tokenizer_name` parameter:
 from jina import Flow, Document
 
 f = Flow().add(
-    uses='jinahub+docker://TransformerTorchEncoder',
+    uses='jinahub+docker://TransformerQAExecutor',
     uses_with={'tokenizer_name': 'distilbert-base-cased-distilled-squad'}
 )
 ```
