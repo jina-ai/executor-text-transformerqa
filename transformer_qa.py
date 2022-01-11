@@ -1,5 +1,5 @@
 from enum import IntEnum
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from transformers import pipeline
 
@@ -17,10 +17,24 @@ class TransformerQAExecutor(Executor):
         device: str = 'cpu',
         model_name: str = 'bert-large-uncased-whole-word-masking-finetuned-squad',
         tokenizer_name: Optional[str] = None,
+        top_k: int = 10,
         **kwargs
     ):
-        tokenizer_name = tokenizer_name or model_name
+        """
+        TransformerQAExecutor wraps a question-answering model from Hugging face.
+        Given some questions and paragraphs/contexts, it extracts the relevant answers
+        from the given paragraphs/contexts.
+
+        :param device: the device to use (either cpu or cuda).
+        :param model_name: the name of the QA model to use
+        :param tokenizer_name: the name of the tokenizer to use. If not provided, model_name is used.
+        :param default_top_k: a default value that the QA model uses to specify the number of answers to
+            extract from the paragraphs. It is also possible to pass `top_k` in parameters to the `generate`
+            method to change the default.
+        """
         super().__init__(**kwargs)
+        tokenizer_name = tokenizer_name or model_name
+        self.default_top_k = top_k
         self.model = pipeline(
             'question-answering',
             model=model_name,
@@ -74,13 +88,25 @@ class TransformerQAExecutor(Executor):
         return ordered_matches
 
     @requests(on='/search')
-    def generate(self, docs, **kwargs):
+    def generate(
+        self, docs: DocumentArray, parameters: Optional[Dict] = None, **kwargs
+    ):
+        """
+        The method extracts the answers of a question from the given paragraphs.
+
+        :param docs: a list of documents where each document has `text` as the question,
+            and relevant paragraphs as matches
+        :param parameters: user can change the default top_k by passing `top_k` in `parameters`
+        """
+        parameters = parameters or {}
+        top_k = parameters.get('top_k', self.default_top_k)
+
         for doc in docs:
             concatenated_texts, span_ranges_to_matches = self._concatenate_matches(
                 doc.matches
             )
             qa_input = [{'context': concatenated_texts, 'question': doc.text}]
-            qa_outputs = self.model(qa_input, top_k=10)
+            qa_outputs = self.model(qa_input, top_k=top_k)
 
             # Get matches in order of qa outputs
             ordered_matches = self._filter_matches(

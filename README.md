@@ -1,6 +1,6 @@
 # TransformerQAExecutor
 
-**TransformerQAExecutor** wraps a question-answering model from huggingface. Given some questions and paragraphs/contexts, it extracts the relevant answers from the given paragraphs/contexts.
+**TransformerQAExecutor** wraps a question-answering model from Hugging Face. Given some questions and paragraphs/contexts, it extracts the relevant answers from the given paragraphs/contexts.
 
 **TransformerQAExexecutor** receives [`Document`s](https://docs.jina.ai/fundamentals/document/) where each `Document`'s `text` is the question, and its `matches`'s texts are the contexts/paragraphs where answers will be extracted from.
 
@@ -25,8 +25,7 @@ with f:
     doc = f.search(inputs=doc, return_results=True).docs[0]
 ```
 
-After search, to get let's say the top 1 answer, paragraph where top 1 answer is extracted from and the confidence score of the top 1 answer:
-
+After searching, we can perform the following to get the top 1 answer.
 ```python
 # Top 1 match
 match = doc.matches[0]
@@ -34,6 +33,7 @@ answer = match.text
 paragraph = match.tags['paragraph']
 confidence = match.scores['confidence'].value
 ```
+We can also get the corresponding paragraph where the answer comes from and the confidence score of the answer.
 
 
 ### Use other pre-trained models
@@ -65,8 +65,8 @@ f = Flow().add(
 ```
 
 ### Use GPUs
-To enable GPU, you can set the `device` parameter to a cuda device.
-Make sure your machine is cuda-compatible.
+To enable GPU, you can set the `device` parameter to a CUDA device.
+Make sure your machine is CUDA-compatible and that you've installed all the required libraries and drivers.
 If you're using a docker container, make sure to add the `gpu` tag and enable 
 GPU access to Docker with `gpus='all'`.
 Furthermore, make sure you satisfy the prerequisites mentioned in 
