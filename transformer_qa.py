@@ -18,6 +18,7 @@ class TransformerQAExecutor(Executor):
         model_name: str = 'bert-large-uncased-whole-word-masking-finetuned-squad',
         tokenizer_name: Optional[str] = None,
         default_limit: int = 10,
+        default_traversal_paths: str = 'r',
         **kwargs
     ):
         """
@@ -35,6 +36,7 @@ class TransformerQAExecutor(Executor):
         super().__init__(**kwargs)
         tokenizer_name = tokenizer_name or model_name
         self.default_limit = default_limit
+        self.default_traversal_paths = default_traversal_paths
         self.model = pipeline(
             'question-answering',
             model=model_name,
@@ -55,8 +57,11 @@ class TransformerQAExecutor(Executor):
         """
         parameters = parameters or {}
         limit = parameters.get('limit', self.default_limit)
+        traversal_paths = parameters.get(
+            'traversal_paths', self.default_traversal_paths
+        )
 
-        for doc in docs:
+        for doc in docs.traverse_flat(traversal_paths):
             qa_input = [{'context': doc.text, 'question': doc.tags['question']}]
             qa_outputs = self.model(qa_input, limit=limit)
             if not isinstance(qa_outputs, list):
