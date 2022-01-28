@@ -29,9 +29,10 @@ class TransformerQAExecutor(Executor):
         :param device: the device to use (either cpu or cuda).
         :param model_name: the name of the QA model to use
         :param tokenizer_name: the name of the tokenizer to use. If not provided, model_name is used.
-        :param default_limit: a default value that the QA model uses to specify the number of answers to
+        :param default_limit: the default value that the QA model uses to specify the number of answers to
             extract from the paragraphs. It is also possible to pass `limit` in parameters to the `generate`
             method to change the default.
+        :param default_traversal_paths: the default traversal path that QA model uses to traverse documents
         """
         super().__init__(**kwargs)
         tokenizer_name = tokenizer_name or model_name
@@ -54,6 +55,7 @@ class TransformerQAExecutor(Executor):
         :param docs: a list of documents where each document has `text` as the paragraph,
             and question in `doc.tags['question']`
         :param parameters: user can change the default limit by passing `limit` in `parameters`
+            user can also change the default traversal path by passing `traversal_paths` in `parameters`
         """
         parameters = parameters or {}
         limit = parameters.get('limit', self.default_limit)
