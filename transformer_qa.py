@@ -1,6 +1,6 @@
 from enum import IntEnum
 from typing import List, Optional, Dict
-
+from warnings import warn
 from transformers import pipeline
 
 from jina import Document, DocumentArray, Executor, requests
@@ -18,7 +18,7 @@ class TransformerQAExecutor(Executor):
         model_name: str = 'bert-large-uncased-whole-word-masking-finetuned-squad',
         tokenizer_name: Optional[str] = None,
         default_limit: int = 10,
-        default_traversal_paths: str = 'r',
+        default_access_paths: str = 'r',
         **kwargs
     ):
         """
@@ -32,12 +32,14 @@ class TransformerQAExecutor(Executor):
         :param default_limit: the default value that the QA model uses to specify the number of answers to
             extract from the paragraphs. It is also possible to pass `limit` in parameters to the `generate`
             method to change the default.
-        :param default_traversal_paths: the default traversal path that QA model uses to traverse documents
+        :param default_access_paths: the default access path that QA model uses to traverse documents
         """
+        if("default_traversal_paths" in kwargs.keys()):
+            warn("'default_traversal_paths' is deprecated, please use 'default_access_paths'",DeprecationWarning,stacklevel=2)
         super().__init__(**kwargs)
         tokenizer_name = tokenizer_name or model_name
         self.default_limit = default_limit
-        self.default_traversal_paths = default_traversal_paths
+        self.default_access_paths = default_access_paths
         self.model = pipeline(
             'question-answering',
             model=model_name,
@@ -55,15 +57,15 @@ class TransformerQAExecutor(Executor):
         :param docs: a list of documents where each document has `text` as the paragraph,
             and question in `doc.tags['question']`
         :param parameters: user can change the default limit by passing `limit` in `parameters`
-            user can also change the default traversal path by passing `traversal_paths` in `parameters`
+            user can also change the default access path by passing `access_paths` in `parameters`
         """
         parameters = parameters or {}
         limit = parameters.get('limit', self.default_limit)
-        traversal_paths = parameters.get(
-            'traversal_paths', self.default_traversal_paths
+        access_paths = parameters.get(
+            'access_paths', self.default_access_paths
         )
 
-        for doc in docs.traverse_flat(traversal_paths):
+        for doc in docs.traverse_flat(access_paths):
             qa_input = [{'context': doc.text, 'question': doc.tags['question']}]
             qa_outputs = self.model(qa_input, limit=limit)
             if not isinstance(qa_outputs, list):

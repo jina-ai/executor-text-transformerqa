@@ -43,20 +43,20 @@ def docs():
 
 
 @pytest.mark.gpu
-@pytest.mark.parametrize('traversal_paths', ['r', 'r,c'])
-def test_search_gpu(docs, traversal_paths):
+@pytest.mark.parametrize('access_paths', ['r', 'r,c'])
+def test_search_gpu(docs, access_paths):
     # this only runs when we add gpu flag in pytest command i.e. "pytest --gpu ..."
-    qa = TransformerQAExecutor(device='cuda', default_traversal_paths=traversal_paths)
-    _test_search(docs, qa, traversal_paths)
+    qa = TransformerQAExecutor(device='cuda', default_access_paths=access_paths)
+    _test_search(docs, qa, access_paths)
 
 
-@pytest.mark.parametrize('traversal_paths', ['r', 'r,c'])
-def test_search(docs, traversal_paths):
-    qa = TransformerQAExecutor(default_traversal_paths=traversal_paths)
-    _test_search(docs, qa, traversal_paths)
+@pytest.mark.parametrize('access_paths', ['r', 'r,c'])
+def test_search(docs, access_paths):
+    qa = TransformerQAExecutor(default_access_paths=access_paths)
+    _test_search(docs, qa, access_paths)
 
 
-def _test_search(docs, qa, traversal_paths):
+def _test_search(docs, qa, access_paths):
     qa.generate(docs)
-    for doc in docs.traverse_flat(traversal_paths):
+    for doc in docs.traverse_flat(access_paths):
         assert doc.matches[0].text == doc.tags['expected']
