@@ -19,6 +19,7 @@ class TransformerQAExecutor(Executor):
         tokenizer_name: Optional[str] = None,
         default_limit: int = 10,
         default_access_paths: str = 'r',
+        default_traversal_paths: Optional[str] = None,
         **kwargs
     ):
         """
@@ -33,13 +34,21 @@ class TransformerQAExecutor(Executor):
             extract from the paragraphs. It is also possible to pass `limit` in parameters to the `generate`
             method to change the default.
         :param default_access_paths: the default access path that QA model uses to traverse documents
+        :param default_traversal_paths: please use default_access_paths
         """
-        if("default_traversal_paths" in kwargs.keys()):
-            warn("'default_traversal_paths' is deprecated, please use 'default_access_paths'",DeprecationWarning,stacklevel=2)
+
         super().__init__(**kwargs)
         tokenizer_name = tokenizer_name or model_name
         self.default_limit = default_limit
-        self.default_access_paths = default_access_paths
+
+        if default_traversal_paths is not None:
+            self.default_access_paths = default_traversal_paths
+            warn("'default_traversal_paths' will be deprecated in the future, please use 'default_access_paths'",
+                 DeprecationWarning,
+                 stacklevel=2)
+        else:
+            self.default_access_paths = default_access_paths
+
         self.model = pipeline(
             'question-answering',
             model=model_name,
